@@ -1,7 +1,4 @@
-const {
-  Service,
-  Characteristic
-} = require('hap-nodejs')
+const { Service, Characteristic } = require("hap-nodejs")
 
 const RestClient = require("node-rest-client").Client
 const client = new RestClient()
@@ -11,11 +8,11 @@ const CHANNEL = "gate"
 
 class SwitchAccessory {
   constructor(log, config) {
-    this.service = new Service.Switch(config['name'], 'Switch')
+    this.service = new Service.Switch(config["name"], "Switch")
 
     const params = {
       data: {
-        gates: config['gates']
+        gates: config["gates"]
       },
       headers: { "Content-Type": "application/json" }
     }
@@ -24,7 +21,7 @@ class SwitchAccessory {
       .getCharacteristic(Characteristic.On)
       .on("set", (value, callback) => {
         if (value) {
-          client.post(`${GATE_URL}/toggle`, params, (data, res) => { })
+          client.post(`${GATE_URL}/toggle`, params, (data, res) => {})
           setTimeout(() => {
             this.service.setCharacteristic(Characteristic.On, false)
           }, 500)

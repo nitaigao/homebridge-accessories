@@ -1,7 +1,4 @@
-const {
-  Service,
-  Characteristic
-} = require('hap-nodejs')
+const { Service, Characteristic } = require("hap-nodejs")
 
 const Redis = require("redis")
 const RestClient = require("node-rest-client").Client
@@ -16,10 +13,16 @@ class DoorAccessory {
   constructor(log, config) {
     this.targetState = 0
 
-    this.service = new Service.GarageDoorOpener(config['name'], 'Door')
+    this.service = new Service.GarageDoorOpener(config["name"], "Door")
 
-    this.service.setCharacteristic(Characteristic.TargetDoorState, Characteristic.TargetDoorState.CLOSED);
-    this.service.setCharacteristic(Characteristic.CurrentDoorState, Characteristic.CurrentDoorState.CLOSED);
+    this.service.setCharacteristic(
+      Characteristic.TargetDoorState,
+      Characteristic.TargetDoorState.CLOSED
+    )
+    this.service.setCharacteristic(
+      Characteristic.CurrentDoorState,
+      Characteristic.CurrentDoorState.CLOSED
+    )
 
     this.service
       .getCharacteristic(Characteristic.CurrentDoorState)
@@ -42,7 +45,7 @@ class DoorAccessory {
             callback(null, Characteristic.CurrentDoorState.CLOSING)
             return
           }
-          console.log('failed')
+          console.log("failed")
           callback("Cant get gate status")
         })
       })
@@ -58,7 +61,9 @@ class DoorAccessory {
         }
         if (message === "opening") {
           this.targetState = Characteristic.TargetDoorState.OPEN
-          this.service.getCharacteristic(Characteristic.TargetDoorState).updateValue(Characteristic.TargetDoorState.OPEN)
+          this.service
+            .getCharacteristic(Characteristic.TargetDoorState)
+            .updateValue(Characteristic.TargetDoorState.OPEN)
           this.service.setCharacteristic(
             Characteristic.CurrentDoorState,
             Characteristic.CurrentDoorState.OPENING
@@ -72,7 +77,9 @@ class DoorAccessory {
         }
         if (message === "closing") {
           this.targetState = Characteristic.TargetDoorState.CLOSED
-          this.service.getCharacteristic(Characteristic.TargetDoorState).updateValue(Characteristic.TargetDoorState.CLOSED)
+          this.service
+            .getCharacteristic(Characteristic.TargetDoorState)
+            .updateValue(Characteristic.TargetDoorState.CLOSED)
           this.service.setCharacteristic(
             Characteristic.CurrentDoorState,
             Characteristic.CurrentDoorState.CLOSING
@@ -95,12 +102,12 @@ class DoorAccessory {
         callback()
         console.log("SET TargetDoorState: " + targetState)
         if (targetState == Characteristic.TargetDoorState.OPEN) {
-          client.post(`${GATE_URL}/open`, {}, (data, resp) => { })
+          client.post(`${GATE_URL}/open`, {}, (data, resp) => {})
           return
         }
 
         if (targetState == Characteristic.TargetDoorState.CLOSED) {
-          client.post(`${GATE_URL}/close`, {}, (data, resp) => { })
+          client.post(`${GATE_URL}/close`, {}, (data, resp) => {})
           return
         }
       })
