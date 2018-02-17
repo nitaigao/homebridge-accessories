@@ -21,7 +21,6 @@ class DoorAccessory {
     this.service.setCharacteristic(Characteristic.TargetDoorState, Characteristic.TargetDoorState.CLOSED);
     this.service.setCharacteristic(Characteristic.CurrentDoorState, Characteristic.CurrentDoorState.CLOSED);
 
-
     this.service
       .getCharacteristic(Characteristic.CurrentDoorState)
       .on("get", callback => {

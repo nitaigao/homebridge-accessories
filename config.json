@@ -11,14 +11,6 @@
   "platforms": [],
 
   "accessories": [{
-    "accessory": "Switch",
-    "name": "Gate",
-    "gates": 1
-  }, {
-    "accessory": "Switch",
-    "name": "Both Gates",
-    "gates": 2
-  }, {
     "accessory": "Door",
     "name": "Gate",
     "gates": 1
@@ -28,3 +20,15 @@
     "gates": 2
   }]
 }
+
+/*
+/*{
+    "accessory": "Switch",
+    "name": "Gate",
+    "gates": 1
+  }, {
+    "accessory": "Switch",
+    "name": "Both Gates",
+    "gates": 2
+  }, */
+  */
