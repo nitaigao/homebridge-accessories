@@ -4,6 +4,7 @@ const {
 } = require('hap-nodejs')
 
 const RestClient = require("node-rest-client").Client
+const client = new RestClient()
 
 const GATE_URL = process.env.GATE_URL || "http://gate.lvh.me:3000"
 const CHANNEL = "gate"
@@ -23,9 +24,7 @@ class SwitchAccessory {
       .getCharacteristic(Characteristic.On)
       .on("set", (value, callback) => {
         if (value) {
-          client.post(`${GATE_URL}/toggle`, params, (data, res) => {
-            console.log(data)
-          })
+          client.post(`${GATE_URL}/toggle`, params, (data, res) => { })
           setTimeout(() => {
             this.service.setCharacteristic(Characteristic.On, false)
           }, 500)

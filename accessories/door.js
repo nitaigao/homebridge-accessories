@@ -18,12 +18,15 @@ class DoorAccessory {
 
     this.service = new Service.GarageDoorOpener(config['name'], 'Door')
 
+    this.service.setCharacteristic(Characteristic.TargetDoorState, Characteristic.TargetDoorState.CLOSED);
+    this.service.setCharacteristic(Characteristic.CurrentDoorState, Characteristic.CurrentDoorState.CLOSED);
+
+
     this.service
       .getCharacteristic(Characteristic.CurrentDoorState)
       .on("get", callback => {
         console.log("GET CurrentDoorState")
         client.get(`${GATE_URL}/status`, (data, error) => {
-          console.log(data)
           if (data.status === "open") {
             callback(null, Characteristic.CurrentDoorState.OPEN)
             return
@@ -40,11 +43,13 @@ class DoorAccessory {
             callback(null, Characteristic.CurrentDoorState.CLOSING)
             return
           }
+          console.log('failed')
           callback("Cant get gate status")
         })
       })
 
     redis.on("message", (channel, message) => {
+      console.log(channel, message)
       if (channel === CHANNEL) {
         if (message === "open") {
           this.service.setCharacteristic(
@@ -53,6 +58,8 @@ class DoorAccessory {
           )
         }
         if (message === "opening") {
+          this.targetState = Characteristic.TargetDoorState.OPEN
+          this.service.getCharacteristic(Characteristic.TargetDoorState).updateValue(Characteristic.TargetDoorState.OPEN)
           this.service.setCharacteristic(
             Characteristic.CurrentDoorState,
             Characteristic.CurrentDoorState.OPENING
@@ -65,12 +72,15 @@ class DoorAccessory {
           )
         }
         if (message === "closing") {
+          this.targetState = Characteristic.TargetDoorState.CLOSED
+          this.service.getCharacteristic(Characteristic.TargetDoorState).updateValue(Characteristic.TargetDoorState.CLOSED)
           this.service.setCharacteristic(
             Characteristic.CurrentDoorState,
             Characteristic.CurrentDoorState.CLOSING
           )
         }
       }
+      console.log(this.targetState)
     })
 
     redis.subscribe(CHANNEL)
@@ -82,24 +92,18 @@ class DoorAccessory {
         callback(this.targetState)
       })
       .on("set", (targetState, callback) => {
+        this.targetState = targetState
+        callback()
         console.log("SET TargetDoorState: " + targetState)
         if (targetState == Characteristic.TargetDoorState.OPEN) {
-          client.post(`${GATE_URL}/open`, {}, (data, resp) => {
-            this.targetState = targetState
-            callback()
-          })
+          client.post(`${GATE_URL}/open`, {}, (data, resp) => { })
           return
         }
 
         if (targetState == Characteristic.TargetDoorState.CLOSED) {
-          client.post(`${GATE_URL}/close`, {}, (data, resp) => {
-            this.targetState = targetState
-            callback()
-          })
+          client.post(`${GATE_URL}/close`, {}, (data, resp) => { })
           return
         }
-
-        callback()
       })
 
     this.informationService = new Service.AccessoryInformation()

@@ -12,15 +12,19 @@
 
   "accessories": [{
     "accessory": "Switch",
-    "name": "Gate"
+    "name": "Gate",
+    "gates": 1
   }, {
     "accessory": "Switch",
-    "name": "Both Gates"
+    "name": "Both Gates",
+    "gates": 2
   }, {
     "accessory": "Door",
-    "name": "Gate"
+    "name": "Gate",
+    "gates": 1
   }, {
     "accessory": "Door",
-    "name": "Both Gates"
+    "name": "Both Gates",
+    "gates": 2
   }]
 }
